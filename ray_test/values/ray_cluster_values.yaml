@@ -1,0 +1,20 @@
+worker:
+  replicas: 1
+  nodeSelector:
+    kubernetes.io/hostname: at-compute007  # or use anti-GPU affinity
+
+additionalWorkerGroups:
+  gpuGroup:
+    disabled: false
+    replicas: 1
+    nodeSelector:
+      nvidia.com/gpu.present: "true"
+    resources:
+      limits:
+        nvidia.com/gpu: 1
+        cpu: "4"
+        memory: "8Gi"
+      requests:
+        nvidia.com/gpu: 1
+        cpu: "4"
+        memory: "8Gi"
