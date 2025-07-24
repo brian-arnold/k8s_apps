@@ -1,0 +1,49 @@
+alloy:
+  configMap:
+    content: |
+      logging {
+        level  = "info"
+        format = "logfmt"
+      }
+      // Discover Kubernetes pods
+      discovery.kubernetes "pods" {
+        role = "pod"
+      }
+      
+      // Discover node information to get node status
+      discovery.kubernetes "nodes" {
+        role = "node"
+      }
+      
+      // Filter out pods on NotReady nodes
+      discovery.relabel "filter_ready_nodes" {
+        targets = discovery.kubernetes.pods.targets
+        
+        // Drop pods on nodes that are NotReady, SchedulingDisabled, or problematic
+        rule {
+          source_labels = ["__meta_kubernetes_pod_node_name"]
+          regex         = ".*(NotReady|SchedulingDisabled).*"
+          action        = "drop"
+        }
+        
+        // Alternative: Explicitly exclude known problematic nodes
+        rule {
+          source_labels = ["__meta_kubernetes_pod_node_name"]
+          regex         = "(at-gpu12|at-compute006|at-gencompute002|poirot)"
+          action        = "drop"
+        }
+      }
+      // Scrape logs from filtered pods
+      loki.source.kubernetes "pods" {
+        targets    = discovery.relabel.filter_ready_nodes.output
+        forward_to = [loki.write.default.receiver]
+      }
+      // Send logs to Loki
+      loki.write "default" {
+        endpoint {
+          url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
+          headers = {
+            "X-Scope-OrgID" = "1",
+          }
+        }
+      }

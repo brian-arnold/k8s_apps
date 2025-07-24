@@ -1,0 +1,71 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: inotify-init-test
+  namespace: barnold
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - at-compute001  # Change this to your target node
+  
+  # Init container handles the inotify tuning
+  initContainers:
+  - name: inotify-init
+    image: busybox:1.33
+    command:
+    - sh
+    - -c
+    - |
+      echo "=== Init Container: Current inotify settings ==="
+      echo "max_user_instances: $(cat /proc/sys/fs/inotify/max_user_instances)"
+      echo "max_user_watches: $(cat /proc/sys/fs/inotify/max_user_watches)"
+      echo "max_queued_events: $(cat /proc/sys/fs/inotify/max_queued_events)"
+      
+      echo "=== Init Container: Applying new inotify settings ==="
+      sysctl -w fs.inotify.max_user_instances=129
+      
+      echo "=== Init Container: New inotify settings ==="
+      echo "max_user_instances: $(cat /proc/sys/fs/inotify/max_user_instances)"
+      echo "max_user_watches: $(cat /proc/sys/fs/inotify/max_user_watches)"
+      echo "max_queued_events: $(cat /proc/sys/fs/inotify/max_queued_events)"
+      
+      echo "=== Init Container: Current inotify usage ==="
+      find /proc/*/fd -lname anon_inode:inotify -exec ls -l {} \; 2>/dev/null | awk '{print $3}' | sort | uniq -c | sort -rn
+      
+      echo "=== Init Container: Changes applied successfully! ==="
+    
+    securityContext:
+      privileged: true
+      runAsUser: 0
+  
+  # Main container to verify the changes persist
+  containers:
+  - name: verify-changes
+    image: busybox:1.33
+    command:
+    - sh
+    - -c
+    - |
+      echo "=== Main Container: Verifying inotify settings ==="
+      echo "max_user_instances: $(cat /proc/sys/fs/inotify/max_user_instances)"
+      echo "max_user_watches: $(cat /proc/sys/fs/inotify/max_user_watches)"
+      echo "max_queued_events: $(cat /proc/sys/fs/inotify/max_queued_events)"
+      
+      echo "=== Main Container: Current inotify usage ==="
+      find /proc/*/fd -lname anon_inode:inotify -exec ls -l {} \; 2>/dev/null | awk '{print $3}' | sort | uniq -c | sort -rn
+      
+      echo "=== Main Container: Verification complete! ==="
+      echo "Sleeping for 60 seconds to keep pod alive for inspection..."
+      sleep 60
+    
+    securityContext:
+      runAsUser: 0
+  
+  restartPolicy: Never
