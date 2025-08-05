@@ -1,0 +1,8 @@
+server:
+  db:
+    fileConfig:
+      persistence:
+        storageClassName: uc-storage
+  deployment:
+    nodeSelector:
+      kubernetes.io/hostname: at-compute003 
