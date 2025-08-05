@@ -1,0 +1,106 @@
+apiVersion: ray.io/v1
+kind: RayJob
+metadata:
+  name: rayjob-video-embeddings
+spec:
+  entrypoint: python /lab/users/barnold/k8s_apps/ray_test/test_jobs/adriano_selection_pipeline/simple_ray_job.py
+  shutdownAfterJobFinishes: true
+  ttlSecondsAfterFinished: 60
+  
+  runtimeEnvYAML: |
+    env_vars:
+      DATA_FOLDER: "/enigma-videos/movies/eco_centric"
+      INPUT_FILES: "/lab/users/barnold/k8s_apps/ray_test/test_jobs/adriano_selection_pipeline/data.txt"
+      BATCH_SIZE: "5"
+      OUTPUT_FOLDER: "/lab/users/barnold/k8s_apps/ray_test/test_jobs/adriano_selection_pipeline/test_out"
+
+  rayClusterSpec:
+    rayVersion: '2.48.0'
+    headGroupSpec:
+      rayStartParams: {}
+      template:
+        spec:
+          volumes:
+          - name: lab
+            hostPath:
+              path: /mnt/lab
+              type: Directory
+          - name: enigma-videos
+            hostPath:
+              path: /mnt/enigma-videos
+              type: Directory
+          containers:
+          - name: ray-head
+            image: registry.atlab.stanford.edu/video-embeddings:latest
+            ports:
+            - containerPort: 6379
+              name: gcs-server
+            - containerPort: 8265
+              name: dashboard
+            - containerPort: 10001
+              name: client
+            resources:
+              requests:
+                cpu: "1"
+              limits:
+                cpu: "2"
+            env:  
+            - name: GITHUB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: github-credentials
+                  key: GITHUB_USERNAME
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: github-credentials
+                  key: GITHUB_TOKEN
+            volumeMounts:
+            - name: lab
+              mountPath: /lab
+            - name: enigma-videos
+              mountPath: /enigma-videos
+          
+    workerGroupSpecs:
+    - replicas: 5
+      groupName: gpu-workers
+      rayStartParams: {}
+      template:
+        spec:
+          volumes:
+          - name: lab
+            hostPath:
+              path: /mnt/lab
+              type: Directory
+          - name: enigma-videos
+            hostPath:
+              path: /mnt/enigma-videos
+              type: Directory
+          containers:
+          - name: ray-worker
+            image: registry.atlab.stanford.edu/video-embeddings:latest
+            resources:
+              requests:
+                nvidia.com/gpu: 1
+                cpu: "1"
+                memory: "4Gi"
+              limits:
+                nvidia.com/gpu: 1
+                cpu: "2"
+                memory: "12Gi"
+            env:  
+            - name: GITHUB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: github-credentials
+                  key: GITHUB_USERNAME
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: github-credentials
+                  key: GITHUB_TOKEN
+            volumeMounts:
+            - name: lab
+              mountPath: /lab
+            - name: enigma-videos
+              mountPath: /enigma-videos

@@ -3,9 +3,12 @@ import time
 import subprocess
 import os
 
+
 @ray.remote(num_gpus=1)
-def long_gpu_task(task_id):
+def gpu_task(task_id):
     try:
+        from spikeinterface import core
+        
         # Check if GPU is allocated via environment variables
         gpu_visible = os.environ.get('CUDA_VISIBLE_DEVICES', 'None')
         
@@ -19,8 +22,7 @@ def long_gpu_task(task_id):
             gpu_name = "GPU detection failed"
             print(f"Task {task_id} starting, GPU_VISIBLE_DEVICES: {gpu_visible}")
         
-        # Run for 3 minutes with some work
-        end_time = time.time() + 180  # 3 minutes
+        end_time = time.time() + 30  
         iteration = 0
         
         while time.time() < end_time:
@@ -34,11 +36,14 @@ def long_gpu_task(task_id):
         return f"Task {task_id} error: {str(e)}"
 
 # Test it
-ray.init(address="ray://10.244.35.106:10001")
+runtime_env = {"pip": ["spikeinterface"]}
+ray.init(address="ray://raycluster-kuberay-head-svc.ray.svc.cluster.local:10001",
+         runtime_env=runtime_env)
 
-# Launch 3 GPU tasks simultaneously
-futures = [long_gpu_task.remote(i) for i in range(3)]
-print("Started 3 GPU tasks - check cluster scaling with: kubectl get pods -n ray -w")
+tasks = 10
+# Launch 10 GPU tasks simultaneously
+futures = [gpu_task.remote(i) for i in range(10)]
+print("Started 10 GPU tasks - check cluster scaling with: kubectl get pods -n ray -w")
 results = ray.get(futures)
 
 for result in results:

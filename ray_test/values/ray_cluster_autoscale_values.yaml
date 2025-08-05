@@ -1,15 +1,32 @@
 image:
-  # tag: "2.48.0"  # Match your client version
+  # Match your client version!
+  repository: rayproject/ray
   tag: "2.48.0-py311" 
+
 head:
   enableInTreeAutoscaling: true
   autoscalerOptions:
     upscalingMode: Default
     idleTimeoutSeconds: 60
+  resources:
+    limits:
+      cpu: "1"
+      # To avoid out-of-memory issues, never allocate less than 2G memory for the Ray head.
+      memory: "2G"
+    requests:
+      cpu: "1"
+      memory: "2G"
 
 worker:
   minReplicas: 0
   maxReplicas: 10
+  resources:
+    limits:
+      cpu: "1"
+      memory: "1G"
+    requests:
+      cpu: "1"
+      memory: "1G"
 
 additionalWorkerGroups:
   gpuGroup:
@@ -23,8 +40,8 @@ additionalWorkerGroups:
       limits:
         nvidia.com/gpu: 1
         cpu: 1
-        memory: "16G"
+        memory: "4G"
       requests:
         nvidia.com/gpu: 1
         cpu: 1
-        memory: "16G"
+        memory: "4G"
