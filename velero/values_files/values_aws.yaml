@@ -1,0 +1,53 @@
+# Velero Helm Values for Minio Backend
+
+# Configure the AWS plugin as an init container
+initContainers:
+  - name: velero-plugin-for-aws
+    image: velero/velero-plugin-for-aws:v1.13.0
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+
+configuration:
+  backupStorageLocation:
+    - name: default
+      provider: aws
+      bucket: enigma-kubernetes-backup # This is the name of your bucket
+      default: true
+      config:
+        region: us-east-2
+
+  # Disable volume snapshots 
+  volumeSnapshotLocation: []
+
+# Configure credentials secret
+credentials:
+  useSecret: true
+  existingSecret: velero-aws-credentials
+
+# Whether to create volumesnapshotlocation crd, if false => disable snapshot feature
+snapshotsEnabled: false
+
+# Whether to create backupstoragelocation crd, if false => do not create a default backup location
+backupsEnabled: true
+
+# Schedule daily backups with 30-day retention
+# Creates a Backup object with the name <SCHEDULE NAME>-<TIMESTAMP>
+schedules:
+  daily-backup:
+    disabled: false
+    schedule: "0 2 * * *" # Daily at 2 AM UTC
+    template:
+      # 180 days retention (4320 hours, 6 months)
+      ttl: "4320h"
+      # Use the default backup storage location
+      storageLocation: default
+      # Backup all namespaces (remove this to backup everything)
+      # includedNamespaces:
+      # - dummy-namespace
+      # Optional: exclude certain resources if needed
+      # excludedResources:
+      # - events
+      # - events.events.k8s.io
+      

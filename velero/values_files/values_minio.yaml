@@ -1,0 +1,77 @@
+# Velero Helm Values for Minio Backend
+
+# Configure the AWS plugin as an init container
+initContainers:
+  - name: velero-plugin-for-aws
+    image: velero/velero-plugin-for-aws:v1.2.1
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+
+# Configure backup storage location for Minio
+# To find the correct s3Url if MinIO gets redeployed:
+# 1. kubectl get services --all-namespaces | grep -i minio
+# 2. Look for the service with port 9000 since MinIO uses this port for incoming connections by default (usually ends with -hl for headless)
+# 3. kubectl describe svc <minio-service-name> -n <namespace>
+# 4. Check if port is labeled "https-minio" (use https://) or "minio" (use http://)
+# 5. URL format: http(s)://<service-name>.<namespace>.svc:9000
+configuration:
+  backupStorageLocation:
+    - name: default
+      provider: aws
+      bucket: velero-backup-test # This is the name of your bucket
+      default: true
+      config:
+        region: minio
+        s3ForcePathStyle: true
+        # this hostname doesn't have a certificate, so skip TLS verify below
+        s3Url: https://minio-tenant-hl.minio-tenant.svc:9000 
+        # s3Url: https://minio.minio-tenant.svc.cluster.local:443
+        # OK to skip b/c this is all internal cluster traffic 
+        insecureSkipTLSVerify: "true" 
+        # NOTE: I was able to use 's3Url: https://minio.minio-tenant.svc.cluster.local:443'
+        # but while this has a certificate, Velero didn't trust MinIO's self-signed cert
+
+  # Disable volume snapshots 
+  volumeSnapshotLocation: []
+
+# Configure credentials secret
+credentials:
+  useSecret: true
+  existingSecret: velero-credentials
+  # below is from the default values file to show the secret contents that were put in velero-credentials
+  #secretContents:
+  #  cloud: |
+  #    [default]
+  #    aws_access_key_id = minio
+  #    aws_secret_access_key = minio123
+
+# Whether to create volumesnapshotlocation crd, if false => disable snapshot feature
+snapshotsEnabled: false
+
+# Whether to create backupstoragelocation crd, if false => do not create a default backup location
+backupsEnabled: true
+
+# Schedule daily backups with 30-day retention
+# Creates a Backup object with the name <SCHEDULE NAME>-<TIMESTAMP>
+schedules:
+  daily-backup:
+    disabled: false
+    schedule: "0 2 * * *" # Daily at 2 AM UTC
+    # schedule: "0 */3 * * *" # Every 3 hours (at minutes 0 of hours 0, 3, 6, 9, 12, 15, 18, 21)
+    # schedule: "*/30 * * * *"  # Every 30 minutes
+    # schedule: "*/5 * * * *"  # Every 5 minutes
+    template:
+      # 30 days retention (720 hours)
+      ttl: "720h"
+      # Use the default backup storage location
+      storageLocation: default
+      # Backup all namespaces (remove this to backup everything)
+      includedNamespaces:
+      # - monitoring
+      # Optional: exclude certain resources if needed
+      # excludedResources:
+      # - events
+      # - events.events.k8s.io
+      

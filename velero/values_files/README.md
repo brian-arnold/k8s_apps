@@ -1,0 +1,1 @@
+The `values_minio.yaml` file was for the original setup with MinIO, whereas `values_aws.yaml` file was used for storing backups on AWS.
