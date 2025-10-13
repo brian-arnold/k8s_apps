@@ -1,1 +1,1 @@
-helm uninstall raycluster-adriano -n ray
+helm uninstall raycluster-adriano-vid-emb -n ray

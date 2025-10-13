@@ -1,0 +1,1 @@
+kubectl exec -n ray autoscale-dashboard-test-kuberay-head -c ray-head -- ray status

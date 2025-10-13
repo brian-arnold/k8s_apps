@@ -1,0 +1,1 @@
+helm uninstall autoscale-dashboard-test -n ray

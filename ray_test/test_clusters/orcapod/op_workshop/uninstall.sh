@@ -1,0 +1,1 @@
+helm uninstall raycluster-op-workshop -n ray

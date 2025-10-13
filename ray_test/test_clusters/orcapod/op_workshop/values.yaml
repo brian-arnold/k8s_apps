@@ -1,6 +1,6 @@
 image:
   # Match your client version!
-  repository: registry.atlab.stanford.edu/video-embeddings
+  repository: registry.atlab.stanford.edu/op-test
   tag: "latest"
   pullPolicy: Always 
 
@@ -16,6 +16,7 @@ head:
     limits:
       cpu: "1"
       memory: "8Gi"
+
   volumes:
     - name: lab-storage
       hostPath:
@@ -25,6 +26,7 @@ head:
       hostPath:
         path: /mnt/enigma-videos
         type: Directory
+
   volumeMounts:
     - name: lab-storage
       mountPath: /lab
@@ -32,20 +34,17 @@ head:
       mountPath: /enigma-videos
 
 worker:
-  replicas: 0
-  minReplicas: 0
-  maxReplicas: 30
-  nodeSelector:
-    nvidia.com/gpu.present: "true"  # or specific GPU node
+  replicas: 5
+  minReplicas: 5
+  maxReplicas: 10
   resources:
     requests:
-      nvidia.com/gpu: 1
       cpu: 1
       memory: "4Gi"
     limits:
-      nvidia.com/gpu: 1
       cpu: 1
-      memory: "20Gi"
+      memory: "10Gi"
+
   volumes:
     - name: lab-storage
       hostPath:
@@ -55,6 +54,7 @@ worker:
       hostPath:
         path: /mnt/enigma-videos
         type: Directory
+
   volumeMounts:
     - name: lab-storage
       mountPath: /lab

@@ -1,0 +1,6 @@
+USER-SUPPLIED VALUES:
+metrics:
+  serviceMonitor:
+    enabled: true
+    selector:
+      release: prometheus

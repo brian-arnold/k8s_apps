@@ -1,0 +1,16 @@
+NAMESPACE      NAME                                                 AGE
+gpu-operator   gpu-operator                                         162d
+monitoring     nvidia-dcgm-exporter                                 162d
+monitoring     prometheus-grafana                                   161d
+monitoring     prometheus-kube-prometheus-alertmanager              161d
+monitoring     prometheus-kube-prometheus-apiserver                 161d
+monitoring     prometheus-kube-prometheus-coredns                   161d
+monitoring     prometheus-kube-prometheus-kube-controller-manager   161d
+monitoring     prometheus-kube-prometheus-kube-etcd                 161d
+monitoring     prometheus-kube-prometheus-kube-proxy                161d
+monitoring     prometheus-kube-prometheus-kube-scheduler            161d
+monitoring     prometheus-kube-prometheus-kubelet                   161d
+monitoring     prometheus-kube-prometheus-operator                  161d
+monitoring     prometheus-kube-prometheus-prometheus                161d
+monitoring     prometheus-kube-state-metrics                        161d
+monitoring     prometheus-prometheus-node-exporter                  161d

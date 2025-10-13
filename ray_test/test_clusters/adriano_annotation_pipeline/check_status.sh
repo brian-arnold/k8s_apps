@@ -1,0 +1,1 @@
+kubectl exec -n ray raycluster-adriano-annotation-kuberay-head-9bpd9 -c ray-head -- ray status

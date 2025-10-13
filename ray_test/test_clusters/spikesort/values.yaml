@@ -1,0 +1,178 @@
+image:
+  # Match your client version!
+  repository: ghcr.io/enigma-brain/python-scientific-gpu
+  tag: "latest"
+  pullPolicy: Always 
+
+head:
+  enableInTreeAutoscaling: true
+  autoscalerOptions:
+    upscalingMode: Default
+    idleTimeoutSeconds: 60
+  resources:
+    requests:
+      cpu: "1"
+      memory: "4Gi"
+    limits:
+      cpu: "1"
+      memory: "12Gi"
+
+  volumes:
+    - name: lab-storage
+      hostPath:
+        path: /mnt/lab
+        type: Directory
+    - name: ephys3
+      hostPath:
+        path: /mnt/scratch14
+        type: Directory
+    - name: stor02
+      hostPath:
+        path: /mnt/stor02
+        type: Directory
+    - name: devenv-barnold
+      hostPath:
+        path: /mnt/devenv/barnold/homedir
+        type: Directory
+    - name: an-data 
+      hostPath:
+        path: /mnt/AnData
+        type: Directory
+  volumeMounts:
+    - name: lab-storage
+      mountPath: /lab
+    - name: ephys3
+      mountPath: /ephys3
+    - name: stor02
+      mountPath: /stor02
+    - name: devenv-barnold
+      mountPath: /home/barnold
+    - name: an-data
+      mountPath: /AnData
+  # affinity:
+  #   nodeAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       nodeSelectorTerms:
+  #       - matchExpressions:
+  #         - key: kubernetes.io/hostname
+  #           operator: In
+  #           values:
+  #           - at-compute010
+
+worker:
+  replicas: 5
+  minReplicas: 8
+  maxReplicas: 15
+  resources:
+    requests:
+      cpu: 15
+      memory: "20Gi"
+    limits:
+      cpu: 15
+      memory: "150Gi"
+
+  volumes:
+    - name: lab-storage
+      hostPath:
+        path: /mnt/lab
+        type: Directory
+    - name: ephys3
+      hostPath:
+        path: /mnt/scratch14
+        type: Directory
+    - name: stor02
+      hostPath:
+        path: /mnt/stor02
+        type: Directory
+    - name: devenv-barnold
+      hostPath:
+        path: /mnt/devenv/barnold/homedir
+        type: Directory
+    - name: an-data 
+      hostPath:
+        path: /mnt/AnData
+        type: Directory
+  volumeMounts:
+    - name: lab-storage
+      mountPath: /lab
+    - name: ephys3
+      mountPath: /ephys3
+    - name: stor02
+      mountPath: /stor02
+    - name: devenv-barnold
+      mountPath: /home/barnold
+    - name: an-data
+      mountPath: /AnData
+
+# additionalWorkerGroups:
+#   gpuGroup:
+#     disabled: false
+#     replicas: 1
+#     minReplicas: 0
+#     maxReplicas: 10
+#     nodeSelector:
+#       nvidia.com/gpu.present: "true"  # or specific GPU node
+#     resources:
+#       limits:
+#         nvidia.com/gpu: 1
+#         cpu: 15
+#         memory: "20G"
+#       requests:
+#         nvidia.com/gpu: 1
+#         cpu: 15
+#         memory: "100G"
+
+#     volumes:
+#       - name: lab-storage
+#         hostPath:
+#           path: /mnt/lab
+#           type: Directory
+#       - name: ephys3
+#         hostPath:
+#           path: /mnt/scratch14
+#           type: Directory
+#       - name: stor02
+#         hostPath:
+#           path: /mnt/stor02
+#           type: Directory
+#       - name: devenv-barnold
+#         hostPath:
+#           path: /mnt/devenv/barnold/homedir
+#           type: Directory
+#       - name: an-data 
+#         hostPath:
+#           path: /mnt/AnData
+#           type: Directory
+#     volumeMounts:
+#       - name: lab-storage
+#         mountPath: /lab
+#       - name: ephys3
+#         mountPath: /ephys3
+#       - name: stor02
+#         mountPath: /stor02
+#       - name: devenv-barnold
+#         mountPath: /home/barnold
+#       - name: an-data
+#         mountPath: /AnData
+    
+
+
+    # affinity:
+    #   nodeAffinity:
+    #     requiredDuringSchedulingIgnoredDuringExecution:
+    #       nodeSelectorTerms:
+    #       - matchExpressions:
+    #         - key: kubernetes.io/hostname
+    #           operator: In
+    #           values:
+    #           - at-gpu1
+    #           - at-gpu2
+    #           - at-gpu3
+    #           - at-gpu4
+    #           - at-gpu5
+    #           - at-gpu6
+    #           - at-gpu7
+    #           - at-gpu8
+    #           - at-gpu9
+    #           - at-gpu10
+    #           - at-gpu11

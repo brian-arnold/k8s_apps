@@ -1,0 +1,1 @@
+kubectl exec -n ray tian-spikesorting-kuberay-head-465rt -c ray-head -- ray status

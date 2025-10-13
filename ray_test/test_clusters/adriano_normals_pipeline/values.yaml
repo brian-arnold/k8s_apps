@@ -1,6 +1,6 @@
 image:
   # Match your client version!
-  repository: registry.atlab.stanford.edu/video-embeddings
+  repository: registry.atlab.stanford.edu/normals_pipeline
   tag: "latest"
   pullPolicy: Always 
 
@@ -34,18 +34,18 @@ head:
 worker:
   replicas: 0
   minReplicas: 0
-  maxReplicas: 30
+  maxReplicas: 10
   nodeSelector:
     nvidia.com/gpu.present: "true"  # or specific GPU node
   resources:
     requests:
       nvidia.com/gpu: 1
       cpu: 1
-      memory: "4Gi"
+      memory: "20Gi"
     limits:
       nvidia.com/gpu: 1
       cpu: 1
-      memory: "20Gi"
+      memory: "50Gi"
   volumes:
     - name: lab-storage
       hostPath:
@@ -60,23 +60,22 @@ worker:
       mountPath: /lab
     - name: enigma-videos
       mountPath: /enigma-videos
-
-    # affinity:
-    #   nodeAffinity:
-    #     requiredDuringSchedulingIgnoredDuringExecution:
-    #       nodeSelectorTerms:
-    #       - matchExpressions:
-    #         - key: kubernetes.io/hostname
-    #           operator: In
-    #           values:
-    #           - at-gpu1
-    #           - at-gpu2
-    #           - at-gpu3
-    #           - at-gpu4
-    #           - at-gpu5
-    #           - at-gpu6
-    #           - at-gpu7
-    #           - at-gpu8
-    #           - at-gpu9
-    #           - at-gpu10
-    #           - at-gpu11
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            # - at-gpu1
+            # - at-gpu2
+            # - at-gpu3
+            # - at-gpu4
+            - at-gpu5
+            - at-gpu6
+            - at-gpu7
+            - at-gpu8
+            - at-gpu9
+            - at-gpu10
+            - at-gpu11

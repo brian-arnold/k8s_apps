@@ -1,0 +1,116 @@
+image:
+  # Match your client version!
+  repository: ghcr.io/enigma-brain/python-scientific-gpu
+  tag: "latest"
+  pullPolicy: Always 
+
+head:
+
+  # Add ports for metrics monitoring
+  ports:
+    - containerPort: 44217
+      name: as-metrics    # autoscaler metrics
+    - containerPort: 44227
+      name: dash-metrics  # dashboard metrics
+
+  containerEnv:
+    - name: RAY_GRAFANA_IFRAME_HOST
+      value: http://127.0.0.1:3000
+    - name: RAY_GRAFANA_HOST
+      value: http://prometheus-grafana.monitoring.svc:80
+    - name: RAY_PROMETHEUS_HOST
+      value: http://prometheus-kube-prometheus-prometheus.monitoring.svc:9090
+
+  # rayStartParams:
+  #   num-cpus: "0" # force head node to not take any work
+  enableInTreeAutoscaling: true
+  autoscalerOptions:
+    upscalingMode: Default
+    idleTimeoutSeconds: 60
+  resources:
+    requests:
+      cpu: 1
+      memory: "8Gi"
+    limits:
+      cpu: 1
+      memory: "8Gi"
+
+  volumes:
+    - name: lab-storage
+      hostPath:
+        path: /mnt/lab
+        type: Directory
+    - name: ephys3
+      hostPath:
+        path: /mnt/scratch14
+        type: Directory
+    - name: stor02
+      hostPath:
+        path: /mnt/stor02
+        type: Directory
+    # - name: devenv-barnold
+    #   hostPath:
+    #     path: /mnt/devenv/barnold/homedir
+    #     type: Directory
+    - name: an-data 
+      hostPath:
+        path: /mnt/AnData
+        type: Directory
+  volumeMounts:
+    - name: lab-storage
+      mountPath: /lab
+    - name: ephys3
+      mountPath: /ephys3
+    - name: stor02
+      mountPath: /stor02
+    # - name: devenv-barnold
+    #   mountPath: /home/barnold
+    - name: an-data
+      mountPath: /AnData
+
+worker:
+  replicas: 0
+  minReplicas: 0
+  maxReplicas: 5
+  resources:
+    requests:
+      # nvidia.com/gpu: 1
+      cpu: 15
+      memory: "50Gi"
+    limits:
+      # nvidia.com/gpu: 1
+      cpu: 15
+      memory: "80Gi"
+
+  volumes:
+    - name: lab-storage
+      hostPath:
+        path: /mnt/lab
+        type: Directory
+    - name: ephys3
+      hostPath:
+        path: /mnt/scratch14
+        type: Directory
+    - name: stor02
+      hostPath:
+        path: /mnt/stor02
+        type: Directory
+    # - name: devenv-barnold
+    #   hostPath:
+    #     path: /mnt/devenv/barnold/homedir
+    #     type: Directory
+    - name: an-data 
+      hostPath:
+        path: /mnt/AnData
+        type: Directory
+  volumeMounts:
+    - name: lab-storage
+      mountPath: /lab
+    - name: ephys3
+      mountPath: /ephys3
+    - name: stor02
+      mountPath: /stor02
+    # - name: devenv-barnold
+    #   mountPath: /home/barnold
+    - name: an-data
+      mountPath: /AnData

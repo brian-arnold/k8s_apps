@@ -1,10 +1,11 @@
 image:
   # Match your client version!
-  repository: registry.atlab.stanford.edu/video-embeddings
+  repository: registry.atlab.stanford.edu/annotation_pipeline
   tag: "latest"
   pullPolicy: Always 
 
 head:
+  priorityClassName: standard-gpu 
   enableInTreeAutoscaling: true
   autoscalerOptions:
     upscalingMode: Default
@@ -12,10 +13,10 @@ head:
   resources:
     requests:
       cpu: "1"
-      memory: "2Gi"
+      memory: "50Gi"
     limits:
       cpu: "1"
-      memory: "8Gi"
+      memory: "50Gi"
   volumes:
     - name: lab-storage
       hostPath:
@@ -32,20 +33,21 @@ head:
       mountPath: /enigma-videos
 
 worker:
-  replicas: 0
-  minReplicas: 0
-  maxReplicas: 30
+  priorityClassName: standard-gpu 
+  replicas: 1
+  minReplicas: 1
+  maxReplicas: 60
   nodeSelector:
     nvidia.com/gpu.present: "true"  # or specific GPU node
   resources:
     requests:
       nvidia.com/gpu: 1
-      cpu: 1
-      memory: "4Gi"
+      cpu: 8
+      memory: "80Gi"
     limits:
       nvidia.com/gpu: 1
-      cpu: 1
-      memory: "20Gi"
+      cpu: 8
+      memory: "80Gi"
   volumes:
     - name: lab-storage
       hostPath:
@@ -61,22 +63,25 @@ worker:
     - name: enigma-videos
       mountPath: /enigma-videos
 
-    # affinity:
-    #   nodeAffinity:
-    #     requiredDuringSchedulingIgnoredDuringExecution:
-    #       nodeSelectorTerms:
-    #       - matchExpressions:
-    #         - key: kubernetes.io/hostname
-    #           operator: In
-    #           values:
-    #           - at-gpu1
-    #           - at-gpu2
-    #           - at-gpu3
-    #           - at-gpu4
-    #           - at-gpu5
-    #           - at-gpu6
-    #           - at-gpu7
-    #           - at-gpu8
-    #           - at-gpu9
-    #           - at-gpu10
-    #           - at-gpu11
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            # lower mem GPUs
+            # - at-gpu1
+            # - at-gpu2
+            # - at-gpu3
+            # - at-gpu5
+            # higher mem GPUs
+            - at-gpu4
+            - at-gpu6
+            - at-gpu7
+            - at-gpu8
+            - at-gpu9
+            - at-gpu10
+            - at-gpu11
+            - at-gpu12

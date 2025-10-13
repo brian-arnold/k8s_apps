@@ -1,0 +1,1 @@
+helm uninstall raycluster-adriano-annotation -n ray

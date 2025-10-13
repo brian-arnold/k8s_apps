@@ -1,0 +1,123 @@
+image:
+  # Match your client version!
+  repository: ghcr.io/enigma-brain/python-scientific-gpu
+  tag: "latest"
+  pullPolicy: Always 
+
+head:
+  priorityClassName: standard-gpu 
+  enableInTreeAutoscaling: true
+  autoscalerOptions:
+    upscalingMode: Default
+    idleTimeoutSeconds: 60
+  resources:
+    requests:
+      cpu: "1"
+      memory: "15Gi"
+    limits:
+      cpu: "1"
+      memory: "15Gi"
+  volumes:
+    - name: lab-storage
+      hostPath:
+        path: /mnt/lab
+        type: Directory
+    - name: ephys3
+      hostPath:
+        path: /mnt/scratch14
+        type: Directory
+    - name: stor02
+      hostPath:
+        path: /mnt/stor02
+        type: Directory
+    - name: devenv-tianw6
+      hostPath:
+        path: /mnt/devenv/tianw6/homedir
+        type: Directory
+    - name: an-data 
+      hostPath:
+        path: /mnt/AnData
+        type: Directory
+  volumeMounts:
+    - name: lab-storage
+      mountPath: /lab
+    - name: ephys3
+      mountPath: /ephys3
+    - name: stor02
+      mountPath: /stor02
+    - name: devenv-tianw6
+      mountPath: /home/tianw6
+    - name: an-data
+      mountPath: /AnData
+
+worker:
+  priorityClassName: standard-gpu 
+  replicas: 1
+  minReplicas: 1
+  maxReplicas: 15
+  nodeSelector:
+    nvidia.com/gpu.present: "true"  # or specific GPU node
+  resources:
+    requests:
+      nvidia.com/gpu: 1
+      cpu: 10
+      memory: "50Gi"
+    limits:
+      nvidia.com/gpu: 1
+      cpu: 10
+      memory: "125Gi"
+  volumes:
+    - name: lab-storage
+      hostPath:
+        path: /mnt/lab
+        type: Directory
+    - name: ephys3
+      hostPath:
+        path: /mnt/scratch14
+        type: Directory
+    - name: stor02
+      hostPath:
+        path: /mnt/stor02
+        type: Directory
+    - name: devenv-tianw6
+      hostPath:
+        path: /mnt/devenv/tianw6/homedir
+        type: Directory
+    - name: an-data 
+      hostPath:
+        path: /mnt/AnData
+        type: Directory
+  volumeMounts:
+    - name: lab-storage
+      mountPath: /lab
+    - name: ephys3
+      mountPath: /ephys3
+    - name: stor02
+      mountPath: /stor02
+    - name: devenv-tianw6
+      mountPath: /home/tianw6
+    - name: an-data
+      mountPath: /AnData 
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            # lower mem GPUs
+            - at-gpu1
+            - at-gpu2
+            - at-gpu3
+            - at-gpu5
+            # higher mem GPUs
+            # - at-gpu4
+            # - at-gpu6
+            # - at-gpu7
+            # - at-gpu8
+            # - at-gpu9
+            # - at-gpu10
+            # - at-gpu11
+            # - at-gpu12

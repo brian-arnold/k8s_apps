@@ -1,0 +1,1 @@
+kubectl exec -n ray raycluster-adriano-annotation-kuberay-head -c ray-head -- ray list actors

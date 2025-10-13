@@ -1,0 +1,1 @@
+kubectl exec -n ray spikesort-kuberay-head -c ray-head -- ray status
