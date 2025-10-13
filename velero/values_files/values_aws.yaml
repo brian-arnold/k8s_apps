@@ -32,6 +32,12 @@ snapshotsEnabled: false
 # Whether to create backupstoragelocation crd, if false => do not create a default backup location
 backupsEnabled: true
 
+metrics:
+  serviceMonitor:
+    enabled: true
+    additionalLabels:
+      release: prometheus
+
 # Schedule daily backups with 30-day retention
 # Creates a Backup object with the name <SCHEDULE NAME>-<TIMESTAMP>
 schedules:
