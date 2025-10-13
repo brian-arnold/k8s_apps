@@ -1,0 +1,44 @@
+version: v1
+nodes:
+    - name: at-storageos2
+      drives:
+        - id: 259:0$KiCxJYgfSR79uvTRDuESiQG4pslr4p8XNTmmOId2Zuw=
+          name: nvme0n1
+          size: 61451933147136
+          make: SOLIDIGM SBFPF2BV614T
+          fs: xfs
+          select: "yes"
+        - id: 259:1$21alH8yKIcy11HSt+JWjYJx8UPv3kTrD3PPhV2Y63Y0=
+          name: nvme1n1
+          size: 61451933147136
+          make: SOLIDIGM SBFPF2BV614T
+          fs: xfs
+          select: "yes"
+    - name: at-storageos3
+      drives:
+        - id: 259:1$tB+Z6oENt2B9HGQlMAfy9hh3xfr3Eg67FTAHUc7hPIE=
+          name: nvme0n1
+          size: 61451933147136
+          make: SOLIDIGM SBFPF2BV614T
+          fs: xfs
+          select: "yes"
+        - id: 259:0$+SrUURKek4JoZwLkiBlEKOQIgsZw6dPTmMf8YR4PKgw=
+          name: nvme1n1
+          size: 61451933147136
+          make: SOLIDIGM SBFPF2BV614T
+          fs: xfs
+          select: "yes"
+    - name: at-storageos4
+      drives:
+        - id: 259:1$opCJQjWf+sXq1uOwTidS7FJuQKYZPZRrL0dAqQPB0MQ=
+          name: nvme0n1
+          size: 61451933147136
+          make: SOLIDIGM SBFPF2BV614T
+          fs: xfs
+          select: "yes"
+        - id: 259:0$juQK1siGWlWOnW2xCFecm/NFONo78OMQKluHnTrq+TU=
+          name: nvme1n1
+          size: 61451933147136
+          make: SOLIDIGM SBFPF2BV614T
+          fs: xfs
+          select: "yes"

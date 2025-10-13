@@ -1,0 +1,1 @@
+kubectl get pods -n directpv | grep node-server | awk '{print $1}' | xargs kubectl delete pod -n directpv

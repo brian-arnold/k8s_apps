@@ -1,0 +1,16 @@
+version: v1
+nodes:
+    - name: at-storageos1
+      drives:
+        - id: 259:0$ObNOrxZDengqhxyOSca6ijDxF4jskteOMf1CW0Q/lo0=
+          name: nvme0n1
+          size: 61451933147136
+          make: SOLIDIGM SBFPF2BV614T
+          fs: xfs
+          select: "yes"
+        - id: 259:1$6eiiAJRb7Se3Th19m5w/mT7hIsRfvLGNB/zZaP680Jc=
+          name: nvme1n1
+          size: 61451933147136
+          make: SOLIDIGM SBFPF2BV614T
+          fs: xfs
+          select: "yes"
