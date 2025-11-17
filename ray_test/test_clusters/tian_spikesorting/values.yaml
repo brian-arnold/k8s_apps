@@ -38,6 +38,18 @@ head:
       hostPath:
         path: /mnt/AnData
         type: Directory
+    - name: at-storageb1-m 
+      hostPath:
+        path: /mnt/at-storageB1_M
+        type: Directory
+    - name: at-storageb2-m 
+      hostPath:
+        path: /mnt/at-storageB2_M
+        type: Directory
+    - name: at-storageb3-m 
+      hostPath:
+        path: /mnt/at-storageB3_M
+        type: Directory
   volumeMounts:
     - name: lab-storage
       mountPath: /lab
@@ -49,6 +61,12 @@ head:
       mountPath: /home/tianw6
     - name: an-data
       mountPath: /AnData
+    - name: at-storageb1-m
+      mountPath: /B1_M
+    - name: at-storageb2-m
+      mountPath: /B2_M
+    - name: at-storageb3-m
+      mountPath: /B3_M
 
 worker:
   priorityClassName: standard-gpu 
@@ -87,6 +105,18 @@ worker:
       hostPath:
         path: /mnt/AnData
         type: Directory
+    - name: at-storageb1-m 
+      hostPath:
+        path: /mnt/at-storageB1_M
+        type: Directory
+    - name: at-storageb2-m 
+      hostPath:
+        path: /mnt/at-storageB2_M
+        type: Directory
+    - name: at-storageb3-m 
+      hostPath:
+        path: /mnt/at-storageB3_M
+        type: Directory
   volumeMounts:
     - name: lab-storage
       mountPath: /lab
@@ -98,7 +128,12 @@ worker:
       mountPath: /home/tianw6
     - name: an-data
       mountPath: /AnData 
-
+    - name: at-storageb1-m
+      mountPath: /B1_M
+    - name: at-storageb2-m
+      mountPath: /B2_M
+    - name: at-storageb3-m
+      mountPath: /B3_M
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
@@ -108,16 +143,16 @@ worker:
             operator: In
             values:
             # lower mem GPUs
-            - at-gpu1
-            - at-gpu2
-            - at-gpu3
-            - at-gpu5
+            # - at-gpu1
+            # - at-gpu2
+            # - at-gpu3
+            # - at-gpu5
             # higher mem GPUs
-            # - at-gpu4
-            # - at-gpu6
-            # - at-gpu7
-            # - at-gpu8
-            # - at-gpu9
-            # - at-gpu10
-            # - at-gpu11
-            # - at-gpu12
+            - at-gpu4
+            - at-gpu6
+            - at-gpu7
+            - at-gpu8
+            - at-gpu9
+            - at-gpu10
+            - at-gpu11
+            - at-gpu12

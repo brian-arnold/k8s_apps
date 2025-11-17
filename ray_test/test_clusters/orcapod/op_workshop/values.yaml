@@ -9,6 +9,9 @@ head:
   autoscalerOptions:
     upscalingMode: Default
     idleTimeoutSeconds: 60
+  env:
+    - name: RAY_RUNTIME_ENV_HOOK
+      value: ray._private.runtime_env.uv_runtime_env_hook.hook    
   resources:
     requests:
       cpu: "1"
@@ -37,6 +40,9 @@ worker:
   replicas: 5
   minReplicas: 5
   maxReplicas: 10
+  env:
+    - name: RAY_RUNTIME_ENV_HOOK
+      value: ray._private.runtime_env.uv_runtime_env_hook.hook  
   resources:
     requests:
       cpu: 1

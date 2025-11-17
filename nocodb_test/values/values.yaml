@@ -1,0 +1,7 @@
+nodeSelector:
+  kubernetes.io/hostname: "at-compute005"
+
+postgresql:
+  primary:
+    persistence:
+      storageClassName: "your-class"

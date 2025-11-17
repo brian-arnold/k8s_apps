@@ -1,0 +1,235 @@
+image:
+  # Match your client version!
+  repository: registry.atlab.stanford.edu/scientific-gpu-py3.12
+  tag: "latest"
+  pullPolicy: Always 
+
+head:
+  enableInTreeAutoscaling: true
+  autoscalerOptions:
+    upscalingMode: Default
+    idleTimeoutSeconds: 60
+  rayStartParams:
+    num-cpus: "0" # designed to prevent jobs from running on head node
+  resources:
+    requests:
+      cpu: "1"
+      memory: "2Gi"
+    limits:
+      cpu: "4"
+      memory: "8Gi"
+  volumes:
+    - name: lab-storage
+      hostPath:
+        path: /mnt/lab
+        type: Directory
+    - name: stor02
+      hostPath:
+        path: /mnt/stor02
+        type: Directory
+    - name: enigma-videos
+      hostPath:
+        path: /mnt/enigma-videos
+        type: Directory
+    - name: ephys3
+      hostPath:
+        path: /mnt/scratch14
+        type: Directory
+    - name: devenv-barnold
+      hostPath:
+        path: /mnt/devenv/barnold/homedir
+        type: Directory
+    - name: an-data 
+      hostPath:
+        path: /mnt/AnData
+        type: Directory
+    - name: at-storageb1-m 
+      hostPath:
+        path: /mnt/at-storageB1_M
+        type: Directory
+    - name: at-storageb2-m 
+      hostPath:
+        path: /mnt/at-storageB2_M
+        type: Directory
+    - name: at-storageb3-m 
+      hostPath:
+        path: /mnt/at-storageB3_M
+        type: Directory
+  volumeMounts:
+    - name: lab-storage
+      mountPath: /lab
+    - name: stor02
+      mountPath: /stor02
+    - name: enigma-videos
+      mountPath: /enigma-videos
+    - name: ephys3
+      mountPath: /ephys3
+    - name: devenv-barnold
+      mountPath: /home/barnold
+    - name: an-data
+      mountPath: /AnData
+    - name: at-storageb1-m
+      mountPath: /B1_M
+    - name: at-storageb2-m
+      mountPath: /B2_M
+    - name: at-storageb3-m
+      mountPath: /B3_M
+      
+worker:
+  replicas: 0
+  minReplicas: 0
+  maxReplicas: 15
+  resources:
+    requests:
+      nvidia.com/gpu: 1
+      cpu: 15 
+      memory: "4Gi"
+    limits:
+      nvidia.com/gpu: 1
+      cpu: 30
+      memory: "150Gi"
+  volumes:
+    - name: lab-storage
+      hostPath:
+        path: /mnt/lab
+        type: Directory
+    - name: stor02
+      hostPath:
+        path: /mnt/stor02
+        type: Directory
+    - name: enigma-videos
+      hostPath:
+        path: /mnt/enigma-videos
+        type: Directory
+    - name: ephys3
+      hostPath:
+        path: /mnt/scratch14
+        type: Directory
+    - name: devenv-barnold
+      hostPath:
+        path: /mnt/devenv/barnold/homedir
+        type: Directory
+    - name: an-data 
+      hostPath:
+        path: /mnt/AnData
+        type: Directory
+    - name: at-storageb1-m 
+      hostPath:
+        path: /mnt/at-storageB1_M
+        type: Directory
+    - name: at-storageb2-m 
+      hostPath:
+        path: /mnt/at-storageB2_M
+        type: Directory
+    - name: at-storageb3-m 
+      hostPath:
+        path: /mnt/at-storageB3_M
+        type: Directory
+  volumeMounts:
+    - name: lab-storage
+      mountPath: /lab
+    - name: stor02
+      mountPath: /stor02
+    - name: enigma-videos
+      mountPath: /enigma-videos
+    - name: ephys3
+      mountPath: /ephys3
+    - name: devenv-barnold
+      mountPath: /home/barnold
+    - name: an-data
+      mountPath: /AnData
+    - name: at-storageb1-m
+      mountPath: /B1_M
+    - name: at-storageb2-m
+      mountPath: /B2_M
+    - name: at-storageb3-m
+      mountPath: /B3_M
+
+additionalWorkerGroups:
+  cpuOnlyGroup:
+    # disabled by default
+    disabled: false
+    replicas: 0
+    minReplicas: 0
+    maxReplicas: 15
+    resources:
+      requests:
+        cpu: 15 
+        memory: "4Gi"
+      limits:
+        cpu: 30
+        memory: "150Gi"
+    volumes:
+      - name: lab-storage
+        hostPath:
+          path: /mnt/lab
+          type: Directory
+      - name: stor02
+        hostPath:
+          path: /mnt/stor02
+          type: Directory
+      - name: enigma-videos
+        hostPath:
+          path: /mnt/enigma-videos
+          type: Directory
+      - name: ephys3
+        hostPath:
+          path: /mnt/scratch14
+          type: Directory
+      - name: devenv-barnold
+        hostPath:
+          path: /mnt/devenv/barnold/homedir
+          type: Directory
+      - name: an-data 
+        hostPath:
+          path: /mnt/AnData
+          type: Directory
+      - name: at-storageb1-m 
+        hostPath:
+          path: /mnt/at-storageB1_M
+          type: Directory
+      - name: at-storageb2-m 
+        hostPath:
+          path: /mnt/at-storageB2_M
+          type: Directory
+      - name: at-storageb3-m 
+        hostPath:
+          path: /mnt/at-storageB3_M
+          type: Directory
+    volumeMounts:
+      - name: lab-storage
+        mountPath: /lab
+      - name: stor02
+        mountPath: /stor02
+      - name: enigma-videos
+        mountPath: /enigma-videos
+      - name: ephys3
+        mountPath: /ephys3
+      - name: devenv-barnold
+        mountPath: /home/barnold
+      - name: an-data
+        mountPath: /AnData
+      - name: at-storageb1-m
+        mountPath: /B1_M
+      - name: at-storageb2-m
+        mountPath: /B2_M
+      - name: at-storageb3-m
+        mountPath: /B3_M
+
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+              - at-compute001
+              - at-compute003
+              - at-compute005
+              - at-compute007
+              - at-compute009
+              - at-compute010
+              - at-compute011
+              - at-compute012
+              - at-compute013

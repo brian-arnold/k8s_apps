@@ -1,0 +1,1 @@
+helm uninstall op-pipe -n ray

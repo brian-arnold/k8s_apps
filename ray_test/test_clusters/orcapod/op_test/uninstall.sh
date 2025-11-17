@@ -1,1 +1,1 @@
-helm uninstall raycluster-op-test -n ray
+helm uninstall op-test -n ray

@@ -9,12 +9,14 @@ head:
   autoscalerOptions:
     upscalingMode: Default
     idleTimeoutSeconds: 60
+  rayStartParams:
+    num-cpus: "0" # designed to prevent jobs from running on head node
   resources:
     requests:
       cpu: "1"
       memory: "2Gi"
     limits:
-      cpu: "1"
+      cpu: "4"
       memory: "8Gi"
 
   volumes:
@@ -52,12 +54,12 @@ worker:
   resources:
     requests:
       nvidia.com/gpu: 1
-      cpu: 1
+      cpu: 15
       memory: "4Gi"
     limits:
       nvidia.com/gpu: 1
-      cpu: 1
-      memory: "50Gi"
+      cpu: 15
+      memory: "150Gi"
 
   volumes:
     - name: lab-storage
